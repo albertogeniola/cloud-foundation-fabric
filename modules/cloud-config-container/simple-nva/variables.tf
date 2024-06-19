@@ -93,6 +93,12 @@ variable "open_ports" {
   }
 }
 
+variable "enable_stateful_firewall_routing" {
+  description = "When set, configures the firewall to only route packets in a stateful mode, preventing unrelated/unestablished traffic from being routed."
+  type        = bool
+  default     = false
+}
+
 variable "run_cmds" {
   description = "Optional cloud init run commands to execute."
   type        = list(string)

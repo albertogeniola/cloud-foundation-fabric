@@ -40,7 +40,15 @@ write_files:
     permissions: 0744
     owner: root
     content: |
+%{ if enable_stateful_firewall_routing ~}
+      iptables -A FORWARD -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+%{ for rule in firewall_forwarding_rules ~}
+      iptables -A FORWARD -i ${rule.ifname} -o ${rule.ofname} -m conntrack --ctstate NEW -j ACCEPT
+%{ endfor ~}
+      iptables --policy FORWARD DROP
+%{ else ~}
       iptables --policy FORWARD ACCEPT
+%{ endif ~}
 %{ for interface in network_interfaces ~}
 %{ if enable_health_checks ~}
       /var/run/nva/policy_based_routing.sh ${interface.name} &>/dev/null &

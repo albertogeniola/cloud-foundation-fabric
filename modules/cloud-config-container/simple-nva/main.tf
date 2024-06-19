@@ -136,12 +136,17 @@ locals {
       for daemon, ports in local._frr_daemons : contains(var.frr_config.daemons_enabled, daemon) ? ports.udp : []
   ], [])), var.open_ports.udp)
 
+  _firewall_forwarding_rules = var.enable_stateful_firewall_routing ? [
+  for x in setproduct(local._network_interfaces, local._network_interfaces) : { "ifname" : x.name, "ofname" : x.name } if x.name != y.name] : []
+
   cloud_config = templatefile(local._template, {
-    enable_health_checks = var.enable_health_checks
-    files                = local._files
-    network_interfaces   = local._network_interfaces
-    open_tcp_ports       = local._tcp_ports
-    open_udp_ports       = local._udp_ports
-    run_cmds             = local._run_cmds
+    enable_health_checks             = var.enable_health_checks
+    files                            = local._files
+    network_interfaces               = local._network_interfaces
+    open_tcp_ports                   = local._tcp_ports
+    open_udp_ports                   = local._udp_ports
+    run_cmds                         = local._run_cmds
+    firewall_forwarding_rules        = local._firewall_forwarding_rules
+    enable_stateful_firewall_routing = var.enable_stateful_firewall_routing
   })
 }
