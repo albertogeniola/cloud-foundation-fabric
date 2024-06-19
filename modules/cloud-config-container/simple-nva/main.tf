@@ -137,7 +137,7 @@ locals {
   ], [])), var.open_ports.udp)
 
   _firewall_forwarding_rules = var.enable_stateful_firewall_routing ? [
-  for x in setproduct(local._network_interfaces, local._network_interfaces) : { "ifname" : x.name, "ofname" : x.name } if x.name != y.name] : []
+  for x in setproduct(local._network_interfaces, local._network_interfaces) : { "ifname" : x[0].name, "ofname" : x[1].name } if x[0].name != x[1].name] : []
 
   cloud_config = templatefile(local._template, {
     enable_health_checks             = var.enable_health_checks
