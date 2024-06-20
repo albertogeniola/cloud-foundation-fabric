@@ -45,6 +45,7 @@ write_files:
 %{ for rule in firewall_forwarding_rules ~}
       iptables -A FORWARD -i ${rule.ifname} -o ${rule.ofname} -m conntrack --ctstate NEW -j ACCEPT
 %{ endfor ~}
+      iptables -A FORWARD -p icmp -j ACCEPT
       iptables --policy FORWARD DROP
 %{ else ~}
       iptables --policy FORWARD ACCEPT
